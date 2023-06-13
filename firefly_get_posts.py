@@ -13,7 +13,6 @@ def main():
         "Origin": "https://w.firefly.pub",
     })
     skipids = read_skipids()
-    max_post_id = find_max_post_id()
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     sub_dir_start = int(input("sub dir start: "))
@@ -77,7 +76,7 @@ def find_max_post_id():
 
 async def save_post(post):
     postid = post['postId']
-    with open(f'posts/post-{postid}.json', 'w') as f:
+    with open(f'posts/post-{postid}.json', 'w' ,encoding='utf-8') as f:
         json.dump(post, f, indent=4, ensure_ascii=False, separators=(',', ':'))
     move_to_sub_dir(postid)
 

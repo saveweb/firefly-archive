@@ -27,6 +27,7 @@ def main():
             continue
         with open(f'posts/{sub_dir}/post-{postid}.json', 'r', encoding='utf-8') as f:
             post: dict = json.load(f)
+        print(f'postid {postid} downloading...')
         for block in post.get('blocks', []):
             block: dict
             cors = []
@@ -34,16 +35,13 @@ def main():
                 if block['image'].get('url') is not None:
                     cor = download_media(client, block['image']['url'], postid)
                     cors.append(cor)
-                    print("postid %d image %s" % (postid, block['image']['url']), end='     \r')
             if block.get('video') is not None:
                 if block['video'].get('url') is not None:
                     cor = download_media(client, block['video']['url'], postid)
                     cors.append(cor)
-                    print("postid %d video %s" % (postid, block['video']['url']), end='     \r')
                 if block['video'].get('coverUrl') is not None:
                     cor = download_media(client, block['video']['coverUrl'], postid)
                     cors.append(cor)
-                    print("postid %d video cover %s" % (postid, block['video']['coverUrl']), end='      \r')
             for cor in cors:
                 loop.create_task(cor)
         while len(asyncio.all_tasks(loop)) > 8:
