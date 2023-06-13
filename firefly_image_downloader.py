@@ -61,7 +61,9 @@ async def download_media(client: httpx.AsyncClient, url: str, postid: int):
         except Exception:
             print("postid %d retrying" % postid, end='\r')
             await asyncio.sleep(1)
-    r.raise_for_status()
+    if r.status_code == 404:
+        print('404', url)
+        return
     assert r.status_code == 200
     assert r.headers["Content-Length"] != "0"
     os.makedirs(os.path.dirname(filepath), exist_ok=True)
