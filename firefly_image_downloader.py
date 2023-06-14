@@ -27,7 +27,7 @@ def main():
             continue
         with open(f'posts/{sub_dir}/post-{postid}.json', 'r', encoding='utf-8') as f:
             post: dict = json.load(f)
-        print(f'postid {postid} downloading...')
+        print(f'postid {postid} downloading...', end='\r')
         for block in post.get('blocks', []):
             block: dict
             cors = []
@@ -61,6 +61,8 @@ async def download_media(client: httpx.AsyncClient, url: str, postid: int):
         except Exception:
             print("postid %d retrying" % postid, end='\r')
             await asyncio.sleep(1)
+    if len(r.history) > 0:
+        print(f"postid {postid} {r.history[-1].status_code} {r.status_code} {url}")
     if r.status_code != 200:
         print(r.status_code, url)
         return
