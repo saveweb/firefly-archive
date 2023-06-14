@@ -56,13 +56,14 @@ async def download_media(client: httpx.AsyncClient, url: str, postid: int):
         return
     while True:
         try:
-            r = await client.get(url, timeout=60, follow_redirects=True)
+            r = await client.get(url, timeout=60, follow_redirects=False)
             break
         except Exception:
             print("postid %d retrying" % postid, end='\r')
             await asyncio.sleep(1)
-    if len(r.history) > 0:
-        print(f"postid {postid} {r.history[-1].status_code} {r.status_code} {url}")
+    if r.status_code == 302:
+        print("302 (假的 302,实际上是资源被删除了，不下载它)", url)
+        return
     if r.status_code != 200:
         print(r.status_code, url)
         return
