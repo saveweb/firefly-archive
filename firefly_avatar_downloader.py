@@ -60,7 +60,7 @@ async def download_avatar(client: httpx.AsyncClient, headPath: str, userId: int)
         print(r.status_code, headPath)
         return
     assert r.headers["Content-Length"] != "0"
-    if 'image'  not in r.headers["Content-Type"]:
+    if 'image' not in r.headers["Content-Type"] and 'multipart' not in r.headers["Content-Type"]:
         print(r.headers["Content-Type"], headPath)
     os.makedirs(os.path.dirname(avatar_filepath), exist_ok=True)
     try:
