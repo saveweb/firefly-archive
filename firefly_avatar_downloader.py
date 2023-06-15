@@ -21,7 +21,7 @@ def main():
     })
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
-    for userId in range(0, 10000):
+    for userId in range(0, 328 * 1000):
         filepath = f'uids/{userId//1000}/uid-{userId}.json'
         if not os.path.exists(filepath):
             # print("userid %d not found" % userId, end='\r')
