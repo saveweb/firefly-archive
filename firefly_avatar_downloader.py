@@ -49,12 +49,16 @@ def main():
 
 async def download_avatar(client: httpx.AsyncClient, headPath: str, userId: int):
     avatar_filepath = f'user_avatars/{userId//1000}/user-{userId}.avatar'
-    while True:
+    retries = 4
+    while retries > 0:
         try:
             r = await client.get(headPath, timeout=60, follow_redirects=True)
             break
-        except Exception:
+        except Exception as e:
             print("userid %d retrying" % userId, end='\r')
+            retries -= 1
+            if retries == 0:
+                raise e
             await asyncio.sleep(1)
     if r.status_code != 200:
         print(r.status_code, headPath)
