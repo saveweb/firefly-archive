@@ -39,7 +39,7 @@ def main():
         headPath = userBase['headPath']
         if headPath == "https://ugcfile.firefly.pub/defaultAvatar/defaultAvatar.png":
             continue
-        print(userId, ':', headPath[:50], '   \r')
+        print(userId, ':', headPath)
         loop.create_task(download_avatar(client, headPath, userId))
         while len(asyncio.all_tasks(loop)) > 8:
             loop.run_until_complete(asyncio.sleep(0.1))
@@ -60,7 +60,8 @@ async def download_avatar(client: httpx.AsyncClient, headPath: str, userId: int)
         print(r.status_code, headPath)
         return
     assert r.headers["Content-Length"] != "0"
-    assert 'image' in r.headers["Content-Type"]
+    if 'image'  not in r.headers["Content-Type"]:
+        print(r.headers["Content-Type"], headPath)
     os.makedirs(os.path.dirname(avatar_filepath), exist_ok=True)
     try:
         with open(avatar_filepath, 'wb') as f:
