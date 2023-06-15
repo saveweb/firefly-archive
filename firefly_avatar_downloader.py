@@ -58,7 +58,8 @@ async def download_avatar(client: httpx.AsyncClient, headPath: str, userId: int)
             print("userid %d retrying" % userId, end='\r')
             retries -= 1
             if retries == 0:
-                raise e
+                print(userId, headPath, "FAILED")
+                return
             await asyncio.sleep(1)
     if r.status_code != 200:
         print(r.status_code, headPath)
