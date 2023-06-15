@@ -22,11 +22,14 @@ def main():
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     for userId in range(0, 328 * 1000):
-        filepath = f'uids/{userId//1000}/uid-{userId}.json'
-        if not os.path.exists(filepath):
+        json_filepath = f'uids/{userId//1000}/uid-{userId}.json'
+        avatar_filepath = f'user_avatars/{userId//1000}/user-{userId}.avatar'
+        if not os.path.exists(json_filepath):
             # print("userid %d not found" % userId, end='\r')
             continue
-        with open(filepath, 'r', encoding='utf-8') as f:
+        if os.path.exists(avatar_filepath):
+            continue
+        with open(json_filepath, 'r', encoding='utf-8') as f:
             UserObj: dict = json.load(f)
         # print(f'userid {userId} parseing...', end='\r')
         userBase = UserObj['userInfoVO']['userBase']
@@ -36,7 +39,7 @@ def main():
         headPath = userBase['headPath']
         if headPath == "https://ugcfile.firefly.pub/defaultAvatar/defaultAvatar.png":
             continue
-        print(userId, ':', headPath)
+        print(userId, ':', headPath[:50], '   \r')
         loop.create_task(download_avatar(client, headPath, userId))
         while len(asyncio.all_tasks(loop)) > 8:
             loop.run_until_complete(asyncio.sleep(0.1))
@@ -45,9 +48,7 @@ def main():
         loop.run_until_complete(asyncio.sleep(1))
 
 async def download_avatar(client: httpx.AsyncClient, headPath: str, userId: int):
-    filepath = f'user_avatars/{userId//1000}/user-{userId}.avatar'
-    if os.path.exists(filepath):
-        return
+    avatar_filepath = f'user_avatars/{userId//1000}/user-{userId}.avatar'
     while True:
         try:
             r = await client.get(headPath, timeout=60, follow_redirects=True)
@@ -60,12 +61,12 @@ async def download_avatar(client: httpx.AsyncClient, headPath: str, userId: int)
         return
     assert r.headers["Content-Length"] != "0"
     assert 'image' in r.headers["Content-Type"]
-    os.makedirs(os.path.dirname(filepath), exist_ok=True)
+    os.makedirs(os.path.dirname(avatar_filepath), exist_ok=True)
     try:
-        with open(filepath, 'wb') as f:
+        with open(avatar_filepath, 'wb') as f:
             f.write(r.content)
     except KeyboardInterrupt:
-        os.remove(filepath)
+        os.remove(avatar_filepath)
         raise
 if __name__ == "__main__":
     main()
