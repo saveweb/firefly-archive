@@ -14,6 +14,7 @@ class Post:
     
     postType: int
     # 1: 一般文字
+
     postLabelList: list
 
     likeCount: int
@@ -56,7 +57,7 @@ class Post:
 
 
 def main():
-    userId_toSearch = 158828
+    userId_toSearch = int(input("userId: "))
     userId_to_postids_map = load_user_posts_map()
     postids = userId_to_postids_map[f"{userId_toSearch}"]
     avatar_filepath = f'user_avatars/{userId_toSearch//1000}/user-{userId_toSearch}.avatar'
@@ -78,7 +79,7 @@ def main():
 
         # print('===',postid, '===')
         gen_post_archive(post)
-    print(f"=== {len(postids)} end ===")
+    print(f"=== Total: {len(postids)} ===")
 
 def load_user_posts_map():
     with open('map_userId_to_postid.json', 'r', encoding='utf-8') as f:
@@ -153,21 +154,26 @@ collection_description: {post_obj.diaryVo['collection']['description'] if post_o
         elif block_type == 4: # 投票
             vote = block["vote"]
             rich.print(vote)
-            raise
             voteTitle: str = vote["voteTitle"]
             optionList: list = vote["optionList"]
+            raise Exception("TODO")
         else:
             print(block)
             raise Exception("Unknown block type")
     if post_obj.hotCommentList:
         markdown += "\n\n```hotCommentList\n"
-        rich.print(post_obj.hotCommentList)
+        # rich.print(post_obj.hotCommentList)
         for comment in post_obj.hotCommentList:
             markdown += f"- {comment['nickName']} -reply-> {comment['toUserNickName']}:\n"
             markdown += f"> {comment['content']}\n"
         markdown += "```\n"
-        print(markdown)
+        
 
+    if post_obj.postLabelList:
+        rich.print(post_obj.postLabelList)
+        raise Exception("TODO")
+    
+    # print(markdown)
     # return
 
     post_archive_dir = f"user_archive/user-{post_obj.userId}/post-{post_obj.postid}"
