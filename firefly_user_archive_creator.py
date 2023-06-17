@@ -187,7 +187,7 @@ collection_description: {post_obj.diaryVo['collection']['description'] if post_o
     
     donwloaded_media_dir = f"posts_media/{post_obj.postid//1000}/post-{post_obj.postid}/"
     if os.path.exists(donwloaded_media_dir):
-        shutil.copytree(donwloaded_media_dir, f"{post_archive_dir}")
+        shutil.copytree(donwloaded_media_dir, f"{post_archive_dir}", dirs_exist_ok=True)
         print(f"copy {donwloaded_media_dir} to {post_archive_dir}")
     
 
