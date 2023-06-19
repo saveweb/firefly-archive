@@ -41,6 +41,9 @@ def search_nickName_in_uids(query: str):
             continue
         with open(json_path, 'r', encoding='utf-8') as f:
             user: dict = json.load(f)
+        if query not in user['userInfoVO']['userBase']['nickName']:
+            continue
+        
         if uid not in matched_nickName:
             matched_nickName[uid] = [
                 user['userInfoVO']['userBase']['nickName'],
