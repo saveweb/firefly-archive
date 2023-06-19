@@ -46,6 +46,9 @@ def search_nickName_in_uids(query: str):
                 user['userInfoVO']['userBase']['nickName'],
                 user['userInfoVO']['userBase']['personDesc']
             ]
+            rich.print(matched_nickName[uid])
+
+    print('== Done ==')
     rich.print(matched_nickName)
 
 
