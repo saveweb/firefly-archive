@@ -41,9 +41,14 @@ def search_nickName_in_uids(query: str):
             continue
         with open(json_path, 'r', encoding='utf-8') as f:
             user: dict = json.load(f)
-        if query not in user['userInfoVO']['userBase']['nickName']:
+
+        try:
+            if query not in user.get('userInfoVO', {}).get('userBase', {}).get('nickName',''):
+                continue
+        except:
+            print("ERROR: uid:",uid)
             continue
-        
+
         if uid not in matched_nickName:
             matched_nickName[uid] = [
                 user['userInfoVO']['userBase']['nickName'],
@@ -56,5 +61,5 @@ def search_nickName_in_uids(query: str):
 
 
 if __name__ == '__main__':
-    # search_nickName_in_posts(query=input('Search NickName: '))
-    search_nickName_in_uids(query=input('Search NickName: '))
+    search_nickName_in_posts(query=input('Search NickName: '))
+#    search_nickName_in_uids(query=input('Search NickName: '))
